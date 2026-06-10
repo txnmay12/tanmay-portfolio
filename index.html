@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tanmay Gautam — Engineering Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #0f0f1a;
+  --card: #12121f;
+  --card2: #16162a;
+  --purple: #7c3aed;
+  --purple-light: #a855f7;
+  --purple-dim: rgba(124,58,237,0.15);
+  --purple-border: rgba(168,85,247,0.25);
+  --accent: #c084fc;
+  --accent2: #e879f9;
+  --text: #e2e0f0;
+  --muted: #6b6880;
+  --muted2: #9990b8;
+  --mono: 'Space Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --glow: 0 0 30px rgba(168,85,247,0.2);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  overflow-x: hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:999;
+  opacity:0.5;
+}
+
+#bg-canvas {
+  position:fixed;
+  inset:0;
+  z-index:0;
+  opacity:0.6;
+}
+
+nav {
+  position:fixed;
+  top:0; left:0; right:0;
+  z-index:100;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:1rem 3rem;
+  background:rgba(10,10,15,0.85);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--purple-border);
+}
+.nav-logo { font-family:var(--mono); font-size:0.8rem; color:var(--accent); letter-spacing:2px; }
+.nav-links { display:flex; gap:2rem; list-style:none; }
+.nav-links a { font-family:var(--mono); font-size:0.72rem; color:var(--muted); text-decoration:none; letter-spacing:1px; transition:color 0.3s; }
+.nav-links a:hover { color:var(--accent); }
+
+section { position:relative; z-index:1; padding:7rem 2rem 4rem; }
+.container { max-width:900px; margin:0 auto; }
+
+/* HERO */
+#hero { min-height:100vh; display:flex; align-items:center; padding-top:5rem; }
+.hero-inner { max-width:900px; margin:0 auto; width:100%; }
+.hero-eyebrow { font-family:var(--mono); font-size:0.72rem; letter-spacing:3px; color:var(--muted2); margin-bottom:1.5rem; opacity:0; animation:fadeUp 0.7s 0.1s forwards; }
+.hero-name { font-size:clamp(3.5rem,9vw,7rem); font-weight:700; line-height:0.95; margin-bottom:1rem; opacity:0; animation:fadeUp 0.7s 0.25s forwards; letter-spacing:-2px; }
+.hero-name .line1 { color:#fff; display:block; }
+.hero-name .line2 { display:block; background:linear-gradient(135deg,var(--purple-light),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.hero-title { font-family:var(--mono); font-size:0.85rem; color:var(--accent); letter-spacing:2px; margin-bottom:1.5rem; opacity:0; animation:fadeUp 0.7s 0.4s forwards; }
+.hero-desc { font-size:1.05rem; color:var(--muted2); max-width:520px; line-height:1.8; margin-bottom:2.5rem; opacity:0; animation:fadeUp 0.7s 0.55s forwards; font-weight:300; }
+.hero-tags { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:2.5rem; opacity:0; animation:fadeUp 0.7s 0.7s forwards; }
+.htag { font-family:var(--mono); font-size:0.7rem; padding:0.35rem 0.9rem; border:1px solid var(--purple-border); border-radius:2px; color:var(--muted2); background:var(--purple-dim); }
+.hero-btns { display:flex; gap:1rem; opacity:0; animation:fadeUp 0.7s 0.85s forwards; flex-wrap:wrap; }
+.btn { font-family:var(--mono); font-size:0.75rem; letter-spacing:1px; padding:0.8rem 1.8rem; border-radius:2px; text-decoration:none; transition:all 0.3s; cursor:pointer; }
+.btn-primary { background:var(--purple); color:#fff; border:none; box-shadow:0 0 25px rgba(124,58,237,0.4); }
+.btn-primary:hover { background:var(--purple-light); box-shadow:0 0 40px rgba(168,85,247,0.6); transform:translateY(-2px); }
+.btn-ghost { background:transparent; color:var(--accent); border:1px solid var(--purple-border); }
+.btn-ghost:hover { background:var(--purple-dim); border-color:var(--accent); transform:translateY(-2px); }
+
+.scroll-indicator { position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:0.5rem; opacity:0; animation:fadeUp 1s 1.2s forwards; }
+.scroll-indicator span { font-family:var(--mono); font-size:0.65rem; color:var(--muted); letter-spacing:2px; }
+.scroll-bar { width:1px; height:48px; background:linear-gradient(to bottom,var(--purple-light),transparent); animation:pulse 2s infinite; }
+
+/* SECTION */
+.sec-label { font-family:var(--mono); font-size:0.7rem; color:var(--purple-light); letter-spacing:3px; margin-bottom:0.4rem; }
+.sec-title { font-size:2.2rem; font-weight:700; color:#fff; margin-bottom:3rem; letter-spacing:-0.5px; }
+.sec-title span { color:var(--accent); }
+
+/* PROJECT BLOCKS */
+.project-block { margin-bottom:4rem; }
+.proj-header { border-bottom:1px solid var(--purple-border); padding-bottom:1rem; margin-bottom:1.5rem; }
+.proj-meta { font-family:var(--mono); font-size:0.68rem; color:var(--muted); letter-spacing:2px; margin-bottom:0.4rem; display:flex; gap:1rem; flex-wrap:wrap; }
+.proj-meta .num { color:var(--purple-light); font-weight:700; }
+.proj-name { font-size:1.6rem; font-weight:700; color:#fff; letter-spacing:-0.5px; margin-bottom:0.3rem; }
+.proj-subtitle { font-family:var(--mono); font-size:0.72rem; color:var(--accent); letter-spacing:1px; }
+
+/* SPEC BAR */
+.spec-bar { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:1px; background:var(--purple-border); border:1px solid var(--purple-border); border-radius:3px; overflow:hidden; margin-bottom:1.5rem; }
+.spec-item { background:var(--card); padding:1rem 1.2rem; text-align:center; }
+.spec-val { font-family:var(--mono); font-size:1.4rem; font-weight:700; color:var(--accent); display:block; line-height:1; margin-bottom:0.3rem; }
+.spec-label { font-family:var(--mono); font-size:0.62rem; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; }
+
+/* TWO COL */
+.proj-cols { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem; }
+@media(max-width:640px){ .proj-cols { grid-template-columns:1fr; } }
+.proj-col-title { font-family:var(--mono); font-size:0.65rem; color:var(--purple-light); letter-spacing:2px; margin-bottom:0.8rem; padding-bottom:0.4rem; border-bottom:1px solid var(--purple-border); }
+
+/* BULLETS */
+.proj-bullets, .proj-bullets-single { list-style:none; display:flex; flex-direction:column; gap:0.7rem; margin-bottom:1.5rem; }
+.proj-bullets li, .proj-bullets-single li { font-size:0.88rem; color:var(--muted2); line-height:1.65; padding-left:1.1rem; position:relative; font-weight:300; }
+.proj-bullets li::before, .proj-bullets-single li::before { content:'■'; position:absolute; left:0; font-size:0.42rem; color:var(--purple-light); top:0.45rem; }
+.proj-bullets li strong, .proj-bullets-single li strong { color:var(--text); font-weight:500; }
+
+/* TAGS */
+.tag-row { display:flex; flex-wrap:wrap; gap:0.5rem; }
+.tag { font-family:var(--mono); font-size:0.65rem; padding:0.3rem 0.7rem; border:1px solid var(--purple-border); border-radius:2px; color:var(--muted2); background:var(--purple-dim); }
+
+.divider { border:none; border-top:1px solid var(--purple-border); margin:0.5rem 0 2.5rem; }
+
+/* EXPERIENCE */
+.exp-block { border-left:1px solid var(--purple-border); padding-left:2rem; position:relative; margin-bottom:2.5rem; }
+.exp-block::before { content:''; position:absolute; left:-4.5px; top:10px; width:8px; height:8px; background:var(--purple-light); border-radius:50%; box-shadow:0 0 12px var(--purple-light); }
+.exp-top { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.3rem; }
+.exp-company { font-size:1.15rem; font-weight:700; color:#fff; }
+.exp-date { font-family:var(--mono); font-size:0.68rem; color:var(--muted); letter-spacing:1px; }
+.exp-role { font-family:var(--mono); font-size:0.7rem; color:var(--accent); letter-spacing:1.5px; margin-bottom:1rem; }
+
+/* SKILLS */
+.skills-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; }
+.skill-card { background:var(--card); border:1px solid var(--purple-border); border-radius:3px; padding:1.3rem; position:relative; overflow:hidden; transition:all 0.3s; }
+.skill-card::before { content:''; position:absolute; top:0; left:0; width:2px; height:100%; background:linear-gradient(to bottom,var(--purple-light),transparent); }
+.skill-card:hover { border-color:rgba(168,85,247,0.5); box-shadow:var(--glow); transform:translateY(-2px); }
+.skill-cat { font-family:var(--mono); font-size:0.65rem; color:var(--purple-light); letter-spacing:2px; margin-bottom:0.8rem; }
+.skill-tags { display:flex; flex-wrap:wrap; gap:0.4rem; }
+
+/* CONTACT */
+#contact { min-height:50vh; display:flex; align-items:center; justify-content:center; text-align:center; }
+.contact-inner { max-width:500px; margin:0 auto; }
+.contact-links { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:2rem; }
+.clink { font-family:var(--mono); font-size:0.72rem; color:var(--muted2); text-decoration:none; padding:0.7rem 1.4rem; border:1px solid var(--purple-border); border-radius:2px; transition:all 0.3s; letter-spacing:1px; }
+.clink:hover { color:var(--accent); border-color:var(--accent); box-shadow:var(--glow); }
+
+footer { position:relative; z-index:1; text-align:center; padding:1.5rem; border-top:1px solid var(--purple-border); font-family:var(--mono); font-size:0.68rem; color:var(--muted); }
+
+/* REVEAL */
+.reveal { opacity:0; transform:translateY(24px); transition:opacity 0.6s ease,transform 0.6s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav>
+  <div class="nav-logo">TG.portfolio</div>
+  <ul class="nav-links">
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">ELECTRICAL &amp; COMPUTER ENGINEERING · UNIVERSITY OF WATERLOO</p>
+    <h1 class="hero-name">
+      <span class="line1">Tanmay</span>
+      <span class="line2">Gautam</span>
+    </h1>
+    <p class="hero-title">ENGINEERING PORTFOLIO</p>
+    <p class="hero-desc">Embedded systems and hardware enthusiast with hands-on experience in sensor integration, analog circuits, and cloud-based ML pipelines.</p>
+    <div class="hero-tags">
+      <span class="htag">Arduino UNO R4</span>
+      <span class="htag">STM32</span>
+      <span class="htag">C/C++</span>
+      <span class="htag">Python</span>
+      <span class="htag">FPGA / VHDL</span>
+      <span class="htag">Azure ML</span>
+    </div>
+    <div class="hero-btns">
+      <a href="#projects" class="btn btn-primary">VIEW PROJECTS</a>
+      <a href="#contact" class="btn btn-ghost">GET IN TOUCH</a>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>SCROLL</span>
+    <div class="scroll-bar"></div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <p class="sec-label reveal">// PROJECTS</p>
+    <h2 class="sec-title reveal">What I've <span>Built</span></h2>
+
+    <!-- 01 -->
+    <div class="project-block reveal">
+      <div class="proj-header">
+        <div class="proj-meta"><span class="num">01</span><span>ECE 198 · UWATERLOO</span><span>SEPT 2025 – DEC 2025</span></div>
+        <h3 class="proj-name">Embedded Systems Lab Projects</h3>
+        <p class="proj-subtitle">Arduino UNO R4 · STM32 · I2C · PWM · UART · ADC · Analog Circuits</p>
+      </div>
+      <div class="spec-bar">
+        <div class="spec-item"><span class="spec-val">I2C</span><span class="spec-label">Protocol</span></div>
+        <div class="spec-item"><span class="spec-val">23kHz</span><span class="spec-label">RLC Resonance</span></div>
+        <div class="spec-item"><span class="spec-val">10-bit</span><span class="spec-label">ADC Resolution</span></div>
+        <div class="spec-item"><span class="spec-val">4</span><span class="spec-label">Lab Modules</span></div>
+      </div>
+      <div class="proj-cols">
+        <div>
+          <p class="proj-col-title">SENSING &amp; FIRMWARE</p>
+          <ul class="proj-bullets">
+            <li>Developed firmware to read real-time <strong>heart rate and SpO2 signals</strong> from a <strong>GY-MAX30102</strong> over <strong>I2C</strong>, tuning LED brightness and ADC resolution for a <strong>patient monitoring</strong> application.</li>
+            <li>Interfaced an <strong>ADXL335 3-axis accelerometer</strong> and <strong>HC-SR04 ultrasonic sensor</strong> with <strong>Arduino UNO R4</strong>, applying <strong>PWM motor control</strong> and <strong>exponential smoothing</strong> for real-time data acquisition.</li>
+          </ul>
+        </div>
+        <div>
+          <p class="proj-col-title">CIRCUITS &amp; ANALYSIS</p>
+          <ul class="proj-bullets">
+            <li>Characterized the <strong>frequency response</strong> of a <strong>series RLC circuit</strong>, measuring <strong>resonance (~23 kHz)</strong>, phase shift, and <strong>band-pass filter</strong> behavior using an oscilloscope.</li>
+            <li>Designed <strong>LED driver circuits</strong> with pull-down resistors, reading <strong>10-bit ADC values</strong> from a potentiometer over <strong>UART serial communication</strong>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag">STM32</span><span class="tag">Arduino UNO R4</span><span class="tag">I2C</span><span class="tag">PWM</span><span class="tag">UART</span><span class="tag">RLC Analysis</span><span class="tag">C/C++</span>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 02 -->
+    <div class="project-block reveal">
+      <div class="proj-header">
+        <div class="proj-meta"><span class="num">02</span><span>PERSONAL PROJECT</span><span>SEPT 2023 – OCT 2023</span></div>
+        <h3 class="proj-name">SolarVerse — Solar-Powered Charger</h3>
+        <p class="proj-subtitle">Power Electronics · Buck Converter · Parallel Circuit Design · Soldering</p>
+      </div>
+      <div class="spec-bar">
+        <div class="spec-item"><span class="spec-val">9V×2</span><span class="spec-label">Input Panels</span></div>
+        <div class="spec-item"><span class="spec-val">5V</span><span class="spec-label">Output (Buck)</span></div>
+        <div class="spec-item"><span class="spec-val">∥</span><span class="spec-label">Parallel Config</span></div>
+        <div class="spec-item"><span class="spec-val">USB</span><span class="spec-label">Output</span></div>
+      </div>
+      <ul class="proj-bullets-single">
+        <li>Built a <strong>portable solar-powered charger</strong> using dual <strong>9V solar panels</strong> and a <strong>5V buck converter</strong>, wiring panels in <strong>parallel configuration</strong> to maximize current output for sustainable mobile charging in field use.</li>
+        <li>Soldered and assembled a <strong>voltage-regulated charging circuit</strong> into a <strong>foldable fabric casing</strong>, producing a lightweight and durable form factor capable of delivering stable power to phones and small devices.</li>
+      </ul>
+      <div class="tag-row">
+        <span class="tag">Solar Panels</span><span class="tag">Buck Converter</span><span class="tag">Parallel Circuits</span><span class="tag">Soldering</span><span class="tag">Power Electronics</span>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 03 -->
+    <div class="project-block reveal">
+      <div class="proj-header">
+        <div class="proj-meta"><span class="num">03</span><span>RESEARCH PAPER</span><span>APR 2023 – JUN 2023</span></div>
+        <h3 class="proj-name">ML for Sneaker Industry Predictions</h3>
+        <p class="proj-subtitle">Python · XGBoost · Decision Trees · Linear Regression · Data Pipelines</p>
+      </div>
+      <div class="spec-bar">
+        <div class="spec-item"><span class="spec-val">0.87</span><span class="spec-label">R² Score</span></div>
+        <div class="spec-item"><span class="spec-val">−15%</span><span class="spec-label">Prediction Error</span></div>
+        <div class="spec-item"><span class="spec-val">3</span><span class="spec-label">Models Compared</span></div>
+      </div>
+      <ul class="proj-bullets-single">
+        <li>Investigated <strong>machine learning approaches</strong> for predicting <strong>sneaker resale prices</strong>, sourcing and preprocessing available datasets to build a structured <strong>prediction pipeline</strong>.</li>
+        <li>Implemented and evaluated <strong>XGBoost Regressor</strong>, <strong>Decision Trees</strong>, and <strong>Linear Regression</strong>, comparing model performance across accuracy, complexity, and generalization.</li>
+        <li>Achieved <strong>R² = 0.87</strong> and reduced prediction error by <strong>15%</strong> using XGBoost over baseline models, identifying it as the optimal approach for non-linear resale price patterns.</li>
+      </ul>
+      <div class="tag-row">
+        <span class="tag">XGBoost</span><span class="tag">Decision Trees</span><span class="tag">Linear Regression</span><span class="tag">Python</span><span class="tag">Data Preprocessing</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <p class="sec-label reveal">// EXPERIENCE</p>
+    <h2 class="sec-title reveal">Where I've <span>Worked</span></h2>
+
+    <div class="exp-block reveal">
+      <div class="exp-top">
+        <h3 class="exp-company">CGI</h3>
+        <span class="exp-date">JAN 2026 – APR 2026</span>
+      </div>
+      <p class="exp-role">BUSINESS ANALYST CO-OP · TORONTO</p>
+      <ul class="proj-bullets-single">
+        <li>Onboarded onto <strong>BMC Remedy ITSM</strong> within one week, raising <strong>200+ Work Orders</strong> and <strong>40+ Change Requests</strong> across Application, Database, and Incident Management to support <strong>CGI-CIBC</strong> operations.</li>
+        <li>Attended daily <strong>Toronto Financial Services team meetings</strong>, documenting Minutes of Meeting and participating in <strong>Change Management reviews</strong> to ensure operational continuity across production environments.</li>
+        <li>Generated <strong>environment usage reports</strong> and maintained a <strong>personal task tracker</strong> to ensure all Work Orders were resolved within <strong>SLA deadlines</strong>.</li>
+      </ul>
+    </div>
+
+    <div class="exp-block reveal">
+      <div class="exp-top">
+        <h3 class="exp-company">Microsoft — WE Accelerate</h3>
+        <span class="exp-date">JAN 2025 – APR 2025</span>
+      </div>
+      <p class="exp-role">AI PRODUCT DEVELOPER · UWATERLOO</p>
+      <ul class="proj-bullets-single">
+        <li>Collaborated with a team of 5 to design an <strong>Azure-based AI coach</strong> leveraging <strong>NLP</strong>, <strong>predictive analytics</strong>, and <strong>sentiment analysis</strong> to deliver personalized financial guidance.</li>
+        <li>Built <strong>financial data pipelines</strong> and trained models in <strong>Azure ML</strong>, targeting <strong>10–25% signup rate</strong>, <strong>60–80% retention</strong>, and a <strong>4.5/5 user rating</strong>.</li>
+        <li>Strengthened <strong>cloud expertise</strong> through <strong>AI-900</strong> and <strong>AZ-900</strong> certification training, contributing to product planning and future research initiatives.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <p class="sec-label reveal">// SKILLS</p>
+    <h2 class="sec-title reveal">Technical <span>Arsenal</span></h2>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <p class="skill-cat">LANGUAGES</p>
+        <div class="skill-tags"><span class="tag">Python</span><span class="tag">C/C++</span><span class="tag">LaTeX</span><span class="tag">Arduino IDE</span></div>
+      </div>
+      <div class="skill-card reveal">
+        <p class="skill-cat">HARDWARE</p>
+        <div class="skill-tags"><span class="tag">Arduino UNO R4</span><span class="tag">STM32</span><span class="tag">Ultrasonic Sensor</span><span class="tag">DC Servo Motor</span></div>
+      </div>
+      <div class="skill-card reveal">
+        <p class="skill-cat">DIGITAL DESIGN</p>
+        <div class="skill-tags"><span class="tag">VHDL</span><span class="tag">Verilog</span><span class="tag">FPGA</span><span class="tag">FSM Design</span><span class="tag">COMSOL</span></div>
+      </div>
+      <div class="skill-card reveal">
+        <p class="skill-cat">LAB INSTRUMENTS</p>
+        <div class="skill-tags"><span class="tag">Oscilloscope</span><span class="tag">Waveform Generator</span><span class="tag">Multimeter</span><span class="tag">Hot Air Rework</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEADERSHIP -->
+<section style="padding-bottom:2rem; position:relative; z-index:1;">
+  <div class="container">
+    <p class="sec-label reveal">// LEADERSHIP</p>
+    <h2 class="sec-title reveal">Beyond the <span>Lab</span></h2>
+    <div class="exp-block reveal">
+      <div class="exp-top">
+        <h3 class="exp-company">Engineering Society Representative</h3>
+        <span class="exp-date">MAY 2025 – AUG 2025</span>
+      </div>
+      <p class="exp-role">UNIVERSITY OF WATERLOO</p>
+      <ul class="proj-bullets-single">
+        <li>Elected as <strong>Engineering Society Representative</strong>, attending board meetings, <strong>proposing and debating motions</strong> on behalf of peers, and assisting in organizing <strong>faculty-wide events</strong> to drive student engagement.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <p class="sec-label reveal" style="text-align:center;">// CONTACT</p>
+    <h2 class="sec-title reveal" style="text-align:center;">Let's <span>Connect</span></h2>
+    <p class="reveal" style="color:var(--muted2);font-size:0.95rem;line-height:1.8;font-weight:300;">Open to co-op opportunities, research collaborations, and interesting hardware projects.</p>
+    <div class="contact-links reveal">
+      <a href="mailto:t3gautam@uwaterloo.ca" class="clink">✉ EMAIL</a>
+      <a href="https://www.linkedin.com/in/tanmaygautam12" target="_blank" class="clink">in LINKEDIN</a>
+      <a href="tel:+16472932858" class="clink">✆ +1 647 293 2858</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span style="color:var(--purple-light);">&lt;</span> Tanmay Gautam · ECE · University of Waterloo · 2026 <span style="color:var(--purple-light);">/&gt;</span>
+</footer>
+
+<script>
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+const COLS=20, ROWS=14;
+let pts=[];
+function initPts(){
+  pts=[];
+  for(let r=0;r<=ROWS;r++) for(let c=0;c<=COLS;c++){
+    pts.push({ bx:(c/COLS)*W, by:(r/ROWS)*H, ox:(Math.random()-0.5)*30, oy:(Math.random()-0.5)*30, phase:Math.random()*Math.PI*2, speed:0.003+Math.random()*0.004 });
+  }
+}
+initPts();
+
+let pulses=[], frame=0;
+function spawnPulse(){
+  const i=Math.floor(Math.random()*pts.length), j=Math.floor(Math.random()*pts.length);
+  pulses.push({i,j,t:0,speed:0.006+Math.random()*0.006});
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  frame++;
+  for(const p of pts){ p.phase+=p.speed; p.x=p.bx+p.ox*Math.sin(p.phase); p.y=p.by+p.oy*Math.cos(p.phase*0.7); }
+
+  for(let a=0;a<pts.length;a++) for(let b=a+1;b<pts.length;b++){
+    const dx=pts[a].x-pts[b].x, dy=pts[a].y-pts[b].y, d=Math.sqrt(dx*dx+dy*dy), maxD=W/COLS*1.6;
+    if(d<maxD){ ctx.strokeStyle=`rgba(124,58,237,${(1-d/maxD)*0.07})`; ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(pts[a].x,pts[a].y); ctx.lineTo(pts[b].x,pts[b].y); ctx.stroke(); }
+  }
+
+  for(const p of pts){ ctx.beginPath(); ctx.arc(p.x,p.y,1.5,0,Math.PI*2); ctx.fillStyle='rgba(168,85,247,0.25)'; ctx.fill(); }
+
+  if(frame%40===0) spawnPulse();
+  pulses=pulses.filter(p=>p.t<=1);
+  for(const p of pulses){
+    const a=pts[p.i],b=pts[p.j]; if(!a||!b) continue;
+    const x=a.x+(b.x-a.x)*p.t, y=a.y+(b.y-a.y)*p.t;
+    const g=ctx.createRadialGradient(x,y,0,x,y,8);
+    g.addColorStop(0,'rgba(232,121,249,0.9)'); g.addColorStop(1,'rgba(232,121,249,0)');
+    ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+    p.t+=p.speed;
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+
+const reveals=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{ if(e.isIntersecting) setTimeout(()=>e.target.classList.add('visible'),i*60); });
+},{threshold:0.08});
+reveals.forEach(r=>obs.observe(r));
+</script>
+</body>
+</html>
